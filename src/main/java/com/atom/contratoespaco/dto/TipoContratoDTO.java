@@ -17,6 +17,7 @@ public class TipoContratoDTO {
     private String espacoNome;
     private TipoContrato.Tipo tipo;
     private String titulo;
+    private String descricao;
     private String textoTemplate;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -30,6 +31,7 @@ public class TipoContratoDTO {
         dto.setEspacoNome(tipoContrato.getEspaco() != null ? tipoContrato.getEspaco().getNome() : null);
         dto.setTipo(tipoContrato.getTipo());
         dto.setTitulo(tipoContrato.getTitulo());
+        dto.setDescricao(tipoContrato.getDescricao());
         dto.setTextoTemplate(tipoContrato.getTextoTemplate());
         dto.setCreatedAt(tipoContrato.getCreatedAt());
         dto.setUpdatedAt(tipoContrato.getUpdatedAt());
@@ -41,6 +43,7 @@ public class TipoContratoDTO {
         tipoContrato.setId(this.id);
         tipoContrato.setTipo(this.tipo);
         tipoContrato.setTitulo(this.titulo);
+        tipoContrato.setDescricao(this.descricao);
         tipoContrato.setTextoTemplate(this.textoTemplate);
         tipoContrato.setCreatedAt(this.createdAt);
         tipoContrato.setUpdatedAt(this.updatedAt);

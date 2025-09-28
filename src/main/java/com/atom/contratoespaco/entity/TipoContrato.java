@@ -31,6 +31,9 @@ public class TipoContrato {
     @Column(nullable = false, length = 200)
     private String titulo;
 
+    @Column(length = 100)
+    private String descricao;
+
     @Column(name = "texto_template", nullable = false, columnDefinition = "TEXT")
     private String textoTemplate;
 

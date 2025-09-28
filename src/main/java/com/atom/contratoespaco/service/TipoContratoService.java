@@ -48,10 +48,8 @@ public class TipoContratoService {
         Espaco espaco = espacoRepository.findById(tipoContratoDTO.getEspacoId())
                 .orElseThrow(() -> new IllegalArgumentException("Espaço não encontrado"));
         
-        // Verificar se já existe um tipo de contrato para este espaço e tipo
-        if (tipoContratoRepository.findByEspacoIdAndTipo(tipoContratoDTO.getEspacoId(), tipoContratoDTO.getTipo()).isPresent()) {
-            throw new IllegalArgumentException("Já existe um " + tipoContratoDTO.getTipo().name() + " para este espaço");
-        }
+        // Permitir múltiplos tipos de contrato para o mesmo espaço
+        // A diferenciação será feita pelo campo 'descricao' (ex: "100%", "50%", etc.)
         
         TipoContrato tipoContrato = tipoContratoDTO.toEntity();
         tipoContrato.setId(null); // Garantir que é uma nova entidade
@@ -68,14 +66,13 @@ public class TipoContratoService {
         Espaco espaco = espacoRepository.findById(tipoContratoDTO.getEspacoId())
                 .orElseThrow(() -> new IllegalArgumentException("Espaço não encontrado"));
         
-        // Verificar se já existe outro tipo de contrato para este espaço e tipo (excluindo o atual)
-        Optional<TipoContrato> tipoExistente = tipoContratoRepository.findByEspacoIdAndTipo(tipoContratoDTO.getEspacoId(), tipoContratoDTO.getTipo());
-        if (tipoExistente.isPresent() && !tipoExistente.get().getId().equals(id)) {
-            throw new IllegalArgumentException("Já existe um " + tipoContratoDTO.getTipo().name() + " para este espaço");
-        }
+        // Permitir múltiplos tipos de contrato para o mesmo espaço
+        // A diferenciação será feita pelo campo 'descricao' (ex: "100%", "50%", etc.)
         
         tipoContratoExistente.setEspaco(espaco);
         tipoContratoExistente.setTipo(tipoContratoDTO.getTipo());
+        tipoContratoExistente.setTitulo(tipoContratoDTO.getTitulo());
+        tipoContratoExistente.setDescricao(tipoContratoDTO.getDescricao());
         tipoContratoExistente.setTextoTemplate(tipoContratoDTO.getTextoTemplate());
         
         TipoContrato tipoContratoAtualizado = tipoContratoRepository.save(tipoContratoExistente);
