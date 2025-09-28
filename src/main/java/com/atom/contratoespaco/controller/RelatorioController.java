@@ -2,8 +2,10 @@ package com.atom.contratoespaco.controller;
 
 import com.atom.contratoespaco.dto.RelatorioDTO;
 import com.atom.contratoespaco.dto.TipoContratoDTO;
+import com.atom.contratoespaco.dto.EspacoDTO;
 import com.atom.contratoespaco.service.RelatorioService;
 import com.atom.contratoespaco.service.TipoContratoService;
+import com.atom.contratoespaco.service.EspacoService;
 import com.atom.contratoespaco.service.PdfService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -24,6 +26,7 @@ public class RelatorioController {
 
     private final RelatorioService relatorioService;
     private final TipoContratoService tipoContratoService;
+    private final EspacoService espacoService;
     private final PdfService pdfService;
 
     @GetMapping
@@ -125,18 +128,21 @@ public class RelatorioController {
             TipoContratoDTO tipoContrato = tipoContratoOpt.get();
             System.out.println("Tipo de contrato encontrado: " + tipoContrato.getTipo());
 
+            // Buscar o espaço
+            Optional<EspacoDTO> espacoOpt = espacoService.buscarEspacoPorId(tipoContrato.getEspacoId());
+            EspacoDTO espaco = espacoOpt.orElse(null);
+            System.out.println("Espaço encontrado: " + (espaco != null ? espaco.getNome() : "não encontrado"));
+
             // Gerar PDF
-            byte[] pdfBytes = pdfService.gerarDocumento(relatorio, tipoContrato);
+            byte[] pdfBytes = pdfService.gerarDocumento(relatorio, tipoContrato, espaco);
+            
+            // Gerar nome do arquivo personalizado: nomeDoEspaco-(Recibo ou Contrato)-DataFesta
+            String nomeArquivo = gerarNomeArquivo(espaco, tipoContrato, relatorio);
             
             // Configurar headers para download
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
-            headers.setContentDispositionFormData("attachment", 
-                String.format("%s_%s_%s.pdf", 
-                    tipoContrato.getTipo().toString().toLowerCase(),
-                    relatorio.getNomeCliente().replaceAll("\\s+", "_"),
-                    relatorio.getDataFesta().toString().replace("-", "_")
-                ));
+            headers.setContentDispositionFormData("attachment", nomeArquivo);
 
             return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
 
@@ -144,6 +150,25 @@ public class RelatorioController {
             System.err.println("Erro ao gerar PDF: " + e.getMessage());
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    
+    private String gerarNomeArquivo(EspacoDTO espaco, TipoContratoDTO tipoContrato, RelatorioDTO relatorio) {
+        try {
+            // Nome do espaço (remover caracteres especiais e espaços)
+            String nomeEspaco = espaco != null ? espaco.getNome() : "Espaco";
+            nomeEspaco = nomeEspaco.replaceAll("[^a-zA-Z0-9\\s]", "").replaceAll("\\s+", "_");
+            
+            // Tipo do documento
+            String tipoDocumento = tipoContrato.getTipo().toString();
+            
+            // Data da festa (formato: dd-MM-yyyy)
+            String dataFesta = relatorio.getDataFesta().toString().replace("-", "-");
+            
+            return String.format("%s-%s-%s.pdf", nomeEspaco, tipoDocumento, dataFesta);
+        } catch (Exception e) {
+            System.err.println("Erro ao gerar nome do arquivo: " + e.getMessage());
+            return "relatorio_" + relatorio.getId() + ".pdf";
         }
     }
 }

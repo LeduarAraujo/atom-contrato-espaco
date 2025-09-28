@@ -24,6 +24,7 @@ CREATE TABLE tipos_contrato (
     id BIGSERIAL PRIMARY KEY,
     espaco_id BIGINT NOT NULL,
     tipo VARCHAR(20) NOT NULL,
+    titulo VARCHAR(200) NOT NULL,
     texto_template TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

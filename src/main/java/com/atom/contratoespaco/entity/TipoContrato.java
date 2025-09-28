@@ -28,6 +28,9 @@ public class TipoContrato {
     @Enumerated(EnumType.STRING)
     private Tipo tipo;
 
+    @Column(nullable = false, length = 200)
+    private String titulo;
+
     @Column(name = "texto_template", nullable = false, columnDefinition = "TEXT")
     private String textoTemplate;
 
