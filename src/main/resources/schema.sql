@@ -15,6 +15,8 @@ CREATE TABLE espacos (
     logo_url VARCHAR(500),
     logo_data BYTEA,
     logo_mime_type VARCHAR(100),
+    nome_proprietario VARCHAR(100),
+    cnpj_proprietario VARCHAR(18),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

@@ -1,10 +1,10 @@
 -- Dados iniciais para o banco de dados
 
 -- Inserir espaços de exemplo
-INSERT INTO espacos (nome, logo_url) VALUES 
-('Salão de Festas Jardim das Flores', 'https://example.com/logo-salao-jardim.png'),
-('Quadra Esportiva Central', 'https://example.com/logo-quadra-central.png'),
-('Centro de Eventos Premium', 'https://example.com/logo-centro-premium.png');
+INSERT INTO espacos (nome, logo_url, nome_proprietario, cnpj_proprietario) VALUES 
+('Salão de Festas Jardim das Flores', 'https://example.com/logo-salao-jardim.png', 'João Silva Santos', '12.345.678/0001-90'),
+('Quadra Esportiva Central', 'https://example.com/logo-quadra-central.png', 'Maria Oliveira Costa', '98.765.432/0001-10'),
+('Centro de Eventos Premium', 'https://example.com/logo-centro-premium.png', 'Carlos Eduardo Lima', '11.222.333/0001-44');
 
 -- Inserir tipos de contrato de exemplo
 INSERT INTO tipos_contrato (espaco_id, tipo, titulo, texto_template) VALUES 

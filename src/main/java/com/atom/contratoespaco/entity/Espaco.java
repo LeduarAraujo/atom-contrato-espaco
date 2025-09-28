@@ -33,6 +33,12 @@ public class Espaco {
     @Column(name = "logo_mime_type")
     private String logoMimeType;
 
+    @Column(name = "nome_proprietario", length = 100)
+    private String nomeProprietario;
+
+    @Column(name = "cnpj_proprietario", length = 18)
+    private String cnpjProprietario;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

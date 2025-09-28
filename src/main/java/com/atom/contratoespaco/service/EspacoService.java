@@ -51,6 +51,8 @@ public class EspacoService {
         
         espacoExistente.setNome(espacoDTO.getNome());
         espacoExistente.setLogoUrl(espacoDTO.getLogoUrl());
+        espacoExistente.setNomeProprietario(espacoDTO.getNomeProprietario());
+        espacoExistente.setCnpjProprietario(espacoDTO.getCnpjProprietario());
         
         Espaco espacoAtualizado = espacoRepository.save(espacoExistente);
         return EspacoDTO.fromEntity(espacoAtualizado);

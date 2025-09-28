@@ -69,13 +69,19 @@ public class EspacoController {
     @PostMapping(value = "/com-imagem", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<EspacoDTO> criarEspacoComImagem(
             @RequestParam("nome") String nome,
-            @RequestParam(value = "logo", required = false) MultipartFile logo) {
+            @RequestParam(value = "logo", required = false) MultipartFile logo,
+            @RequestParam(value = "nomeProprietario", required = false) String nomeProprietario,
+            @RequestParam(value = "cnpjProprietario", required = false) String cnpjProprietario) {
         try {
             System.out.println("Criando espaço com nome: " + nome);
+            System.out.println("Nome do proprietário: " + nomeProprietario);
+            System.out.println("CNPJ do proprietário: " + cnpjProprietario);
             System.out.println("Arquivo recebido: " + (logo != null ? logo.getOriginalFilename() : "nenhum"));
 
             EspacoDTO espacoDTO = new EspacoDTO();
             espacoDTO.setNome(nome);
+            espacoDTO.setNomeProprietario(nomeProprietario);
+            espacoDTO.setCnpjProprietario(cnpjProprietario);
 
             // Se há um arquivo, salvar como BLOB no banco
             if (logo != null && !logo.isEmpty()) {
