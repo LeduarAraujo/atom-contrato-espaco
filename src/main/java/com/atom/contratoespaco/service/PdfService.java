@@ -1,6 +1,6 @@
 package com.atom.contratoespaco.service;
 
-import com.atom.contratoespaco.dto.RelatorioDTO;
+import com.atom.contratoespaco.dto.ReservaDTO;
 import com.atom.contratoespaco.dto.TipoContratoDTO;
 import com.atom.contratoespaco.dto.EspacoDTO;
 import com.itextpdf.text.*;
@@ -23,12 +23,12 @@ public class PdfService {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-    public byte[] gerarDocumento(RelatorioDTO relatorio, TipoContratoDTO tipoContrato, EspacoDTO espaco) {
+    public byte[] gerarDocumento(ReservaDTO reserva, TipoContratoDTO tipoContrato, EspacoDTO espaco) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         
         try {
             System.out.println("Iniciando geração de PDF profissional...");
-            System.out.println("Relatório: " + relatorio.getNomeCliente());
+            System.out.println("Relatório: " + reserva.getNomeCliente());
             System.out.println("Tipo de contrato: " + tipoContrato.getTipo());
             
             // Configurar documento com margens maiores para aparência profissional
@@ -39,9 +39,9 @@ public class PdfService {
             writer.setPageEvent(new PageNumberEvent());
             
             // Definir metadados do documento
-            String nomeArquivo = gerarNomeArquivo(relatorio, tipoContrato);
+            String nomeArquivo = gerarNomeArquivo(reserva, tipoContrato);
             document.addTitle(nomeArquivo);
-            document.addSubject("Contrato de Espaço - " + relatorio.getNomeCliente());
+            document.addSubject("Contrato de Espaço - " + reserva.getNomeCliente());
             document.addKeywords("contrato, espaço, " + tipoContrato.getTipo());
             document.addCreator("Sistema de Contratos de Espaço");
             document.addAuthor("Sistema de Contratos");
@@ -55,15 +55,15 @@ public class PdfService {
             adicionarTituloSimplificado(document, tipoContrato);
             
             // Adicionar conteúdo central do contrato
-            adicionarConteudoCentral(document, tipoContrato, relatorio);
+            adicionarConteudoCentral(document, tipoContrato, reserva);
             
             // Adicionar seção de assinaturas baseada no tipo de contrato
             if (tipoContrato.getTipo().toString().equals("RECIBO")) {
                 System.out.println("MONTANDO RECIBO");
-                adicionarAssinaturaRecibo(document, relatorio, espaco);
+                adicionarAssinaturaRecibo(document, reserva, espaco);
             } else {
                 System.out.println("MONTANDO CONTRATO");
-                adicionarAssinaturasProfissionais(document, relatorio, espaco);
+                adicionarAssinaturasProfissionais(document, reserva, espaco);
             }
             
             document.close();
@@ -77,25 +77,25 @@ public class PdfService {
         }
     }
 
-    private String processarTemplate(String template, RelatorioDTO relatorio) {
+    private String processarTemplate(String template, ReservaDTO reserva) {
         // Formatar CPF/CNPJ com máscara
-        String cpfFormatado = formatarCpfCnpj(relatorio.getCpfCliente());
+        String cpfFormatado = formatarCpfCnpj(reserva.getCpfCliente());
         
         // Formatar data com dia da semana
-        String dataComDiaSemana = formatarDataComDiaSemana(relatorio.getDataFesta());
+        String dataComDiaSemana = formatarDataComDiaSemana(reserva.getDataFesta());
         
         // Formatar valor por extenso
-        String valorExtenso = formatarValorPorExtenso(relatorio.getValorPago().doubleValue());
+        String valorExtenso = formatarValorPorExtenso(reserva.getValorPagamento().doubleValue());
         
         return template
-                .replace("{nome}", relatorio.getNomeCliente())
+                .replace("{nome}", reserva.getNomeCliente())
                 .replace("{cpf}", cpfFormatado)
-                .replace("{valor}", String.format("R$ %.2f", relatorio.getValorPago()))
+                .replace("{valor}", String.format("R$ %.2f", reserva.getValorPagamento()))
                 .replace("{valorExtenso}", valorExtenso)
                 .replace("{dataFesta}", dataComDiaSemana)
-                .replace("{horaInicio}", relatorio.getHoraInicio().toString())
-                .replace("{horaFim}", relatorio.getHoraFim().toString())
-                .replace("{valorIntegral}", relatorio.getValorIntegral() ? "Integral" : "Parcial");
+                .replace("{horaInicio}", reserva.getHoraInicio().toString())
+                .replace("{horaFim}", reserva.getHoraFim().toString())
+                .replace("{valorIntegral}", reserva.getValorIntegral() ? "Integral" : "Parcial");
     }
     
     private String formatarCpfCnpj(String cpfCnpj) {
@@ -227,10 +227,10 @@ public class PdfService {
         return Files.readAllBytes(Paths.get("pdfs/" + nomeArquivo));
     }
     
-    private String gerarNomeArquivo(RelatorioDTO relatorio, TipoContratoDTO tipoContrato) {
+    private String gerarNomeArquivo(ReservaDTO reserva, TipoContratoDTO tipoContrato) {
         // Gerar nome do arquivo baseado no cliente e data
-        String nomeCliente = relatorio.getNomeCliente().replaceAll("[^a-zA-Z0-9]", "_");
-        String dataFesta = relatorio.getDataFesta().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        String nomeCliente = reserva.getNomeCliente().replaceAll("[^a-zA-Z0-9]", "_");
+        String dataFesta = reserva.getDataFesta().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         String tipoContratoLimpo = tipoContrato.getTipo().toString().replaceAll("[^a-zA-Z0-9]", "_");
         
         return String.format("%s_%s_%s.pdf", nomeCliente, dataFesta, tipoContratoLimpo);
@@ -315,9 +315,9 @@ public class PdfService {
     }
 
 
-    private void adicionarConteudoCentral(Document document, TipoContratoDTO tipoContrato, RelatorioDTO relatorio) throws DocumentException {
+    private void adicionarConteudoCentral(Document document, TipoContratoDTO tipoContrato, ReservaDTO reserva) throws DocumentException {
         // Processar o template substituindo os placeholders
-        String textoProcessado = processarTemplate(tipoContrato.getTextoTemplate(), relatorio);
+        String textoProcessado = processarTemplate(tipoContrato.getTextoTemplate(), reserva);
         
         // Adicionar o texto processado ao PDF com formatação profissional
         String[] linhas = textoProcessado.split("\n");
@@ -339,7 +339,7 @@ public class PdfService {
         }
     }
 
-    private void adicionarAssinaturasProfissionais(Document document, RelatorioDTO relatorio, EspacoDTO espaco) throws DocumentException {
+    private void adicionarAssinaturasProfissionais(Document document, ReservaDTO reserva, EspacoDTO espaco) throws DocumentException {
         // Espaçamento antes das assinaturas
         document.add(new Paragraph(" "));
         document.add(new Paragraph(" "));
@@ -384,11 +384,11 @@ public class PdfService {
         linhaAssinatura.addCell(linha);
         celulaCliente.addElement(linhaAssinatura);
         
-        Paragraph clienteNome = new Paragraph(relatorio.getNomeCliente(), valueFont);
+        Paragraph clienteNome = new Paragraph(reserva.getNomeCliente(), valueFont);
         clienteNome.setAlignment(Element.ALIGN_CENTER);
         celulaCliente.addElement(clienteNome);
         
-        String cpfFormatado = formatarCpfCnpj(relatorio.getCpfCliente());
+        String cpfFormatado = formatarCpfCnpj(reserva.getCpfCliente());
         Paragraph clienteCpf = new Paragraph("CPF: " + cpfFormatado, valueFont);
         clienteCpf.setAlignment(Element.ALIGN_CENTER);
         celulaCliente.addElement(clienteCpf);
@@ -452,7 +452,7 @@ public class PdfService {
         document.add(tabelaAssinaturas);
     }
 
-    private void adicionarAssinaturaRecibo(Document document, RelatorioDTO relatorio, EspacoDTO espaco) throws DocumentException {
+    private void adicionarAssinaturaRecibo(Document document, ReservaDTO reserva, EspacoDTO espaco) throws DocumentException {
         // Espaçamento antes das assinaturas
         document.add(new Paragraph(" "));
         document.add(new Paragraph(" "));

@@ -10,7 +10,7 @@ spring:
   
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
     show-sql: true
     properties:
       hibernate:
@@ -19,9 +19,9 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   sql:
     init:
-      mode: always
-      schema-locations: classpath:schema.sql
-      data-locations: classpath:data.sql
+      mode: never
+      # schema-locations: classpath:schema.sql
+      # data-locations: classpath:data.sql
   
   servlet:
     multipart:

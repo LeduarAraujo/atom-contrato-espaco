@@ -1,12 +1,12 @@
 -- Script de criação das tabelas do banco de dados - Versão Simplificada
 
 -- Limpar todas as tabelas existentes
+DROP TABLE IF EXISTS reservas CASCADE;
 DROP TABLE IF EXISTS recibos CASCADE;
 DROP TABLE IF EXISTS contratos_locacao CASCADE;
 DROP TABLE IF EXISTS clientes CASCADE;
 DROP TABLE IF EXISTS tipos_contrato CASCADE;
 DROP TABLE IF EXISTS espacos CASCADE;
-DROP TABLE IF EXISTS relatorios CASCADE;
 
 -- Tabela de espaços
 CREATE TABLE espacos (
@@ -34,27 +34,30 @@ CREATE TABLE tipos_contrato (
     FOREIGN KEY (espaco_id) REFERENCES espacos(id)
 );
 
--- Tabela de relatórios gerados
-CREATE TABLE relatorios (
+
+-- Tabela de reservas
+CREATE TABLE reservas (
     id BIGSERIAL PRIMARY KEY,
-    tipo_contrato_id BIGINT NOT NULL,
+    espaco_id BIGINT NOT NULL,
     nome_cliente VARCHAR(100) NOT NULL,
     cpf_cliente VARCHAR(14) NOT NULL,
+    telefone_cliente VARCHAR(20) NOT NULL,
     data_festa DATE NOT NULL,
     hora_inicio TIME NOT NULL,
     hora_fim TIME NOT NULL,
-    valor_pago DECIMAL(10,2) NOT NULL,
+    valor_pagamento DECIMAL(10,2) NOT NULL,
     valor_integral BOOLEAN DEFAULT FALSE,
-    arquivo_gerado VARCHAR(500),
+    valor_restante DECIMAL(10,2),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (tipo_contrato_id) REFERENCES tipos_contrato(id)
+    FOREIGN KEY (espaco_id) REFERENCES espacos(id)
 );
 
 -- Índices para melhorar performance
 CREATE INDEX idx_espacos_nome ON espacos(nome);
 CREATE INDEX idx_tipos_contrato_espaco ON tipos_contrato(espaco_id);
 CREATE INDEX idx_tipos_contrato_tipo ON tipos_contrato(tipo);
-CREATE INDEX idx_relatorios_tipo_contrato ON relatorios(tipo_contrato_id);
-CREATE INDEX idx_relatorios_cliente ON relatorios(nome_cliente);
-CREATE INDEX idx_relatorios_data ON relatorios(data_festa);
+CREATE INDEX idx_reservas_espaco ON reservas(espaco_id);
+CREATE INDEX idx_reservas_cliente ON reservas(nome_cliente);
+CREATE INDEX idx_reservas_data ON reservas(data_festa);
+CREATE INDEX idx_reservas_cpf ON reservas(cpf_cliente);
