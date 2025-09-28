@@ -15,6 +15,8 @@ public class EspacoDTO {
     private Long id;
     private String nome;
     private String logoUrl;
+    private byte[] logoData;
+    private String logoMimeType;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -25,6 +27,8 @@ public class EspacoDTO {
         dto.setId(espaco.getId());
         dto.setNome(espaco.getNome());
         dto.setLogoUrl(espaco.getLogoUrl());
+        dto.setLogoData(espaco.getLogoData());
+        dto.setLogoMimeType(espaco.getLogoMimeType());
         dto.setCreatedAt(espaco.getCreatedAt());
         dto.setUpdatedAt(espaco.getUpdatedAt());
         return dto;
@@ -35,6 +39,8 @@ public class EspacoDTO {
         espaco.setId(this.id);
         espaco.setNome(this.nome);
         espaco.setLogoUrl(this.logoUrl);
+        espaco.setLogoData(this.logoData);
+        espaco.setLogoMimeType(this.logoMimeType);
         espaco.setCreatedAt(this.createdAt);
         espaco.setUpdatedAt(this.updatedAt);
         return espaco;

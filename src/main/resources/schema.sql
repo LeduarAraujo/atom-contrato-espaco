@@ -13,6 +13,8 @@ CREATE TABLE espacos (
     id BIGSERIAL PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     logo_url VARCHAR(500),
+    logo_data BYTEA,
+    logo_mime_type VARCHAR(100),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
