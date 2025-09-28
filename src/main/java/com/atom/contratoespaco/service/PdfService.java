@@ -4,10 +4,7 @@ import com.atom.contratoespaco.dto.RelatorioDTO;
 import com.atom.contratoespaco.dto.TipoContratoDTO;
 import com.atom.contratoespaco.dto.EspacoDTO;
 import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.text.pdf.BaseFont;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +33,15 @@ public class PdfService {
             
             Document document = new Document(PageSize.A4, 50, 50, 50, 50);
             PdfWriter.getInstance(document, outputStream);
+            
+            // Definir metadados do documento, incluindo o nome do arquivo
+            String nomeArquivo = gerarNomeArquivo(relatorio, tipoContrato);
+            document.addTitle(nomeArquivo);
+            document.addSubject("Contrato de Espaço - " + relatorio.getNomeCliente());
+            document.addKeywords("contrato, espaço, " + tipoContrato.getTipo());
+            document.addCreator("Sistema de Contratos de Espaço");
+            document.addAuthor("Sistema de Contratos");
+            
             document.open();
             
             // Adicionar logo no canto superior direito (se existir)
@@ -237,5 +243,14 @@ public class PdfService {
 
     public byte[] carregarPdf(String nomeArquivo) throws IOException {
         return Files.readAllBytes(Paths.get("pdfs/" + nomeArquivo));
+    }
+    
+    private String gerarNomeArquivo(RelatorioDTO relatorio, TipoContratoDTO tipoContrato) {
+        // Gerar nome do arquivo baseado no cliente e data
+        String nomeCliente = relatorio.getNomeCliente().replaceAll("[^a-zA-Z0-9]", "_");
+        String dataFesta = relatorio.getDataFesta().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        String tipoContratoLimpo = tipoContrato.getTipo().toString().replaceAll("[^a-zA-Z0-9]", "_");
+        
+        return String.format("%s_%s_%s.pdf", nomeCliente, dataFesta, tipoContratoLimpo);
     }
 }

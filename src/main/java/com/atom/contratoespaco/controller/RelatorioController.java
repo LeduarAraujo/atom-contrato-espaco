@@ -159,13 +159,13 @@ public class RelatorioController {
             String nomeEspaco = espaco != null ? espaco.getNome() : "Espaco";
             nomeEspaco = nomeEspaco.replaceAll("[^a-zA-Z0-9\\s]", "").replaceAll("\\s+", "_");
             
-            // Tipo do documento
+            // Tipo do documento (Contrato ou Recibo)
             String tipoDocumento = tipoContrato.getTipo().toString();
             
-            // Data da festa (formato: dd-MM-yyyy)
-            String dataFesta = relatorio.getDataFesta().toString().replace("-", "-");
+            // Data de hoje (formato: dd-MM-yyyy)
+            String dataHoje = LocalDate.now().toString().replace("-", "-");
             
-            return String.format("%s-%s-%s.pdf", nomeEspaco, tipoDocumento, dataFesta);
+            return String.format("%s-%s-%s.pdf", nomeEspaco, tipoDocumento, dataHoje);
         } catch (Exception e) {
             System.err.println("Erro ao gerar nome do arquivo: " + e.getMessage());
             return "relatorio_" + relatorio.getId() + ".pdf";
