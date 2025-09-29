@@ -26,8 +26,7 @@ public class Espaco {
     @Column(name = "logo_url")
     private String logoUrl;
 
-    @Lob
-    @Column(name = "logo_data")
+    @Column(name = "logo_data", columnDefinition = "bytea")
     private byte[] logoData;
 
     @Column(name = "logo_mime_type")
